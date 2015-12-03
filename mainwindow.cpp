@@ -32,35 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ctd_scene = new QGraphicsScene();
     pixmap = new QPixmap();
     ctd = new QPixmap();
-
-    //генерация палитры для вывода на экран (справа)
-    int width = 50;
-    int height = 500;
-    int i, j, k;
-    uchar *raster;
-    raster = (uchar*)malloc(width*height*sizeof(uchar)*4);
-    Color tmp;
-    for(i = 0; i < height/5; ++i){
-        for(j = 0; j < 5; ++j){
-            for(k = 0; k < width; ++k){
-                tmp = (ui->graphicsView->db_color_map[-i]);
-                raster[i*width*5*4 + j*width*4 + k*4] = tmp.red;
-                raster[i*width*5*4 + j*width*4 + k*4 + 1] = tmp.green;
-                raster[i*width*5*4 + j*width*4 + k*4 + 2] = tmp.blue;
-                raster[i*width*5*4 + j*width*4 + k*4 + 3] = 255;
-            }
-        }
-    }
-    *ctd = QPixmap::fromImage(
-                QImage(
-                    (unsigned char *) raster,
-                    width,
-                    height,
-                    QImage::Format_RGBA8888
-                )
-            );
-    ctd_scene->addPixmap((*ctd));
-    free(raster);
+    ui->graphicsView->db_color_map = &(ui->color_to_db->db_color_map);
 
     //загрузка плана
     pixmap->load(settings->PATH_TO_PLAN);
@@ -69,13 +41,12 @@ MainWindow::MainWindow(QWidget *parent) :
     pixmap->setMask(*mask);
     delete mask;
     if(!pixmap->isNull()) scene->addPixmap((*pixmap).scaled(settings->FINE_WIDTH, settings->FINE_HEIGHT, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-
-    //настройки, коннекты
     ui->graphicsView->set_geom(settings->FINE_WIDTH, settings->FINE_HEIGHT);
     ui->graphicsView->setScene(scene);
+
+    //настройки, коннекты
     ui->graphicsView->verticalScrollBar()->blockSignals(true);
     ui->graphicsView->horizontalScrollBar()->blockSignals(true);
-    ui->color_to_db->setScene(ctd_scene);
     ui->color_to_db->verticalScrollBar()->blockSignals(true);
     ui->color_to_db->horizontalScrollBar()->blockSignals(true);
     ui->color_to_db->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
@@ -88,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_picture, SIGNAL(triggered()), this, SLOT(save_picture()));
     connect(ui->actionLoad_new_plan, SIGNAL(triggered()), this, SLOT(load_new_plan()));
     connect(ui->graphicsView->a_client, SIGNAL(update_current_signal(int)), this, SLOT(update_current_signal(int)));
+    connect(ui->color_to_db, SIGNAL(palette_updated()), ui->graphicsView, SLOT(draw_heat()) );
 
     //старт Wi-Fi потока
     ui->graphicsView->airodump_thread->start();
@@ -110,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::update_current_network_aps_label(int amount){
     char x[] = "xxxxx";
-    if(ui->graphicsView->a_client->current_network.id != -1){
+    if(ui->graphicsView->a_client->current_network.id != NETWORK_NOT_SELECTED){
         sprintf(x, "%d", amount);
         ui->aps_in_current_network_label->setText(x);
     }

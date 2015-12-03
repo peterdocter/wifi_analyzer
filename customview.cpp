@@ -27,12 +27,10 @@ customView::customView(QWidget *parent) :
 {
     settings = ((MainWindow*)((MainWindow*)parentWidget())->parentWidget())->settings;
     pen = new QPen();
-    int r,g,b;
-    r=0;
-    g=0;
     /*
-     * более плавный градиент
-    int step = 40;
+     * другой вариант палитры
+     */
+    /*int step = 40;
     b = 200;
     int j;
     for (int i = 0; i > -20; i--)
@@ -57,6 +55,8 @@ customView::customView(QWidget *parent) :
         }
 
     }*/
+    /**/
+    /*
     b=255;
     int step = 8;
 
@@ -79,6 +79,7 @@ customView::customView(QWidget *parent) :
         }
     }
     db_color_map.insert ( std::pair<int,Color>(-100, Color((uint8_t)255,(uint8_t)255,(uint8_t)255)) );
+    */
     amount_of_points = 0;
     scene = new QGraphicsScene();
     a_client = new airodump_client(settings);
@@ -90,6 +91,7 @@ customView::customView(QWidget *parent) :
 }
 
 void customView::mousePressEvent(QMouseEvent *event){
+    event->setAccepted(true);
     if(a_client->mouse_pressed == 0){
         a_client->mouse_pressed=0;
         if(a_client->current_network.id == NETWORK_NOT_SELECTED) {
@@ -268,7 +270,7 @@ void customView::draw_heat(){
 
     //с помощью OpenGL (widget.h, widget.cpp) нормально заполняем растр - преобразуем уровень сигнала в цвет, интерполируем
     //значения на маленькие квадраты (SCALE x SCALE)
-    opengl->setGL((int32_t*)raster, settings->SCALE, settings->FINE_HEIGHT, settings->FINE_WIDTH, &db_color_map);
+    opengl->setGL((int32_t*)raster, settings->SCALE, settings->FINE_HEIGHT, settings->FINE_WIDTH, db_color_map);
     opengl->paintGL();
     *gl_pixmap = opengl->renderPixmap();
 

@@ -19,6 +19,7 @@
 #include "settings.h"
 #include <QInputDialog>
 #include "airodump_client.h"
+#include "paletteview.h"
 
 
 namespace Ui {

@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     airodump_client.cpp \
     custombuttongroup.cpp \
     settings.cpp \
-    widget.cpp
+    widget.cpp \
+    paletteview.cpp
 
 HEADERS  += mainwindow.h \
     customview.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     airodump_client.h \
     custombuttongroup.h \
     settings.h \
-    widget.h
+    widget.h \
+    paletteview.h
 
 FORMS    += mainwindow.ui
 

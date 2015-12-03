@@ -115,7 +115,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QGraphicsView" name="color_to_db">
+    <widget class="paletteView" name="color_to_db">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -371,6 +371,11 @@
    <class>customView</class>
    <extends>QGraphicsView</extends>
    <header>customview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>paletteView</class>
+   <extends>QGraphicsView</extends>
+   <header>paletteview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -35,7 +35,7 @@ public:
     airodump_client* a_client;
     QPixmap* pixmap;
     QPixmap* pixmap_tiff;
-    std::map <int, Color> db_color_map;
+    std::map <int, Color> *db_color_map;
     QThread* airodump_thread;
     DrawRasterWidget* opengl;
     QPixmap* gl_pixmap;
@@ -46,7 +46,11 @@ public:
     ~customView();
 public slots:
     void clear_points();
-    void draw_heat(); // составление и решение уравнения теплопроводности, создание и вывод на экран результата с маской (план)
+    /*
+     * составление и решение уравнения теплопроводности, создание и вывод на экран результата с маской (план
+     * аргументы - указатель на map с палитрой
+     */
+    void draw_heat();
 public:
     void mousePressEvent(QMouseEvent * e);
 signals:
