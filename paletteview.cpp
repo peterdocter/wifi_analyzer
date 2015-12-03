@@ -26,8 +26,6 @@ paletteView::paletteView(QWidget *parent) :
     smooth_palette_flag = 1;
     width = 50;
     height = 500;
-    scene = new QGraphicsScene();
-    this->setScene(scene);
     ctd_scene = new QGraphicsScene();
     ctd = new QPixmap();
     fill_palette();
@@ -39,6 +37,8 @@ void paletteView::fill_palette(){
     g=0;
     int step;
     int i, j;
+    int bb = 25;
+    int gg = 230;
     db_color_map.clear();
     if(!smooth_palette_flag){
         step = 40;
@@ -48,11 +48,19 @@ void paletteView::fill_palette(){
             for(j=0;j<5;++j){
                 db_color_map.insert ( std::pair<int,Color>(i*5-j, Color((uint8_t)r,(uint8_t)g,(uint8_t)b)) );
             }
+            if(g==gg && b==bb){
+                b=0;
+                g=255;
+                r=40;
+            }
             if(b > 0) {
                 b -= step;
-                if(b <= 55) b=0;
                 g+=step;
-                if(g > 200 || b==0) g=255;
+                if(b <= 15) b=0;
+                if(g >= 240 || b==0) {
+                    g=gg;
+                    b=bb;
+                }
             }else if(b==0 && g==255 && r!=255){
                 r+=step;
                 if(r>255) r=255;
@@ -129,4 +137,6 @@ void paletteView::set_geom(uint32 new_width, uint32 new_height){
 
 
 paletteView::~paletteView(){
+    delete ctd_scene;
+    delete ctd;
 }

@@ -21,7 +21,6 @@ public:
 
     int smooth_palette_flag;
     std::map <int, Color> db_color_map;
-    QThread* airodump_thread;
     QGraphicsScene *ctd_scene;
     QPixmap* ctd;
 
@@ -37,7 +36,6 @@ signals:
     void palette_updated();
 private:
     uint32 width, height;
-    QGraphicsScene *scene;
 };
 
 #endif // PALETTEVIEW_H

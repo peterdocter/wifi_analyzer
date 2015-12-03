@@ -54,6 +54,7 @@ public slots:
     void handle_refresh_button();
     void update_current_signal(int x);
     void update_current_network_aps_label(int amount);
+    void my_exit();
 private:
     QVBoxLayout *for_scroll;
     QVBoxLayout *vbox;

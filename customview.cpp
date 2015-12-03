@@ -27,59 +27,6 @@ customView::customView(QWidget *parent) :
 {
     settings = ((MainWindow*)((MainWindow*)parentWidget())->parentWidget())->settings;
     pen = new QPen();
-    /*
-     * другой вариант палитры
-     */
-    /*int step = 40;
-    b = 200;
-    int j;
-    for (int i = 0; i > -20; i--)
-    {
-        //printf("(%d;%d;%d)\n",r,g,b);
-        for(j=0;j<5;++j){
-            db_color_map.insert ( std::pair<int,Color>(i*5-j, Color((uint8_t)r,(uint8_t)g,(uint8_t)b)) );
-        }
-        if(b>0) {
-            b-=step;
-            if(b<0) b=0;
-            g+=step;
-            if(g>200 || b==0) g=200;
-        }else
-        if(b==0 && g==200 && r!=255){
-            r+=step;
-            if(r>255) r=255;
-        }else
-        if(b==0 && g<=200 && r==255){
-            g-=step;
-            if(g<0) g=0;
-        }
-
-    }*/
-    /**/
-    /*
-    b=255;
-    int step = 8;
-
-    for (int i = 0; i > -100; i--)
-    {
-        db_color_map.insert ( std::pair<int,Color>(i, Color((uint8_t)r,(uint8_t)g,(uint8_t)b)) );
-        if(b>0) {
-            b-=step;
-            if(b<0) b=0;
-            g+=step;
-            if(g>255 || b==0) g=255;
-        }else
-        if(b==0 && g==255 && r!=255){
-            r+=step;
-            if(r>255) r=255;
-        }else
-        if(b==0 && g<=255 && r==255){
-            g-=step;
-            if(g<0) g=0;
-        }
-    }
-    db_color_map.insert ( std::pair<int,Color>(-100, Color((uint8_t)255,(uint8_t)255,(uint8_t)255)) );
-    */
     amount_of_points = 0;
     scene = new QGraphicsScene();
     a_client = new airodump_client(settings);
@@ -142,7 +89,7 @@ void customView::clear_points(){
 int convert_to_band_sym_index(int i, int j, int kd){
     int ret;
     ret = j*(kd+1) + (kd+i-j);
-    if(i>=max(0,j-kd) && j>=max(0,j-kd) && j>=i){
+    if(i >= max(0,j-kd) && j>=max(0,j-kd) && j>=i){
         return ret;
     }
     return -1;
@@ -179,7 +126,7 @@ void customView::draw_heat(){
     memset(b, 0, m*k*sizeof(double));
     memset(ab, 0, (kd+1)*m*k*sizeof(double));
 
-    for(i=0;i<n;++i){
+    for(i = 0; i < n; ++i){
         nr[i]=points[i].y/settings->SCALE;
         nc[i]=points[i].x/settings->SCALE;
         nv[i]=(double)points[i].sig;
@@ -193,7 +140,7 @@ void customView::draw_heat(){
 
     //заполняем матрицу:
     // dec - для стационарности (когда у элемента нет 4-ёх соседей, нельзя ставить для него коэффициент 4)
-    for(i=0;i<m*k;++i){
+    for(i = 0; i < m*k; ++i){
         row = i/(m);
         col = i%(k);
         dec=0;
@@ -206,20 +153,20 @@ void customView::draw_heat(){
         if(index>=0) ab[index]=4.0-dec;
 
         index = convert_to_band_sym_index(i, i+1, kd);
-        if(i+1<m*k && col!=(k-1) && index>=0) 	ab[index]=-1.0;
+        if(i+1<m*k && col!=(k-1) && index>=0)   ab[index] = -1.0;
 
         index = convert_to_band_sym_index(i, i-1, kd);
-        if(i>=1 && col!=(0) && index>=0) ab[index]=-1.0;
+        if(i>=1 && col!=(0) && index>=0)        ab[index] = -1.0;
 
         index = convert_to_band_sym_index(i, -m+row*m+col, kd);
-        if(row!=0 && index>=0) 		ab[index]=-1.0;
+        if(row!=0 && index>=0)                  ab[index] = -1.0;
 
         index = convert_to_band_sym_index(i, m+row*m+col, kd);
-        if(row!=(m-1) && index>=0) 	ab[index]=-1.0;
+        if(row!=(m-1) && index>=0)              ab[index] = -1.0;
     }
 
     //для всех известных точек вставляем в матрицу значение методом Айронса-Пейна (http://reffan.ru/referat_jgejgeatyotrqasyfsujg.html)
-    for(i=0;i<n;++i){
+    for(i = 0; i < n; ++i){
         row = nr[i];
         col = nc[i];
         index = convert_to_band_sym_index(row*k+col, row*k+col, kd);

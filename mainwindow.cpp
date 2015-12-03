@@ -14,6 +14,8 @@
 #include <QScrollArea>
 #include <QFileDialog>
 #include <QScrollBar>
+#include <QMessageBox>
+#include <QErrorMessage>
 #include <unistd.h>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -25,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     settings = new Settings((QWidget*)this);
     this->setObjectName("Wi-Fi Area Analyzer");
     ui->setupUi(this);
+    if(!ui->graphicsView->a_client->init()) exit(0);
     ui->current_signal_frame->hide();
     connect(ui->graphicsView->a_client, SIGNAL (update_networks_list(int, char*)), this, SLOT (handle_new_network(int, char*)));
     connect(ui->refresh_button, SIGNAL (pressed()), this, SLOT (handle_refresh_button()));
@@ -93,14 +96,13 @@ void MainWindow::save_picture(){
                                                "Path for saving:", QLineEdit::Normal, ".png");
     if(output_file.length()==0) return;
     QPixmap pixmap = ui->graphicsView->grab();
-    if(!pixmap.save(output_file)) qDebug("Error in saving picture\n");
+    if(!pixmap.save(output_file)) {
+        QMessageBox::critical(NULL, "Error", "Plan was not saved");
+    }
     return;
 }
 
 void MainWindow::load_new_plan(){
-    QString a = "Plan loading";
-    QString b = "Path to plan:";
-    QString c = "";
     QString d = "Open plan";
     QString output_file;
     //output_file = QInputDialog::getText(NULL, a, b, QLineEdit::Normal, c);
@@ -112,7 +114,6 @@ void MainWindow::load_new_plan(){
     scene->addPixmap(*pixmap);
     ui->graphicsView->setScene(scene);
     ui->graphicsView->draw_heat();
-    //handle_refresh_button();
     return;
 }
 
@@ -175,6 +176,10 @@ void MainWindow::handle_refresh_button(){
 
 Ui::MainWindow* MainWindow::get_ui(){
     return ui;
+}
+
+void MainWindow::my_exit(){
+    exit(0);
 }
 
 MainWindow::~MainWindow()
